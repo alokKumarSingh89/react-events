@@ -10,6 +10,7 @@ import {
 } from "semantic-ui-react";
 import EventListAttendee from "./EventListAttendee";
 import { Attendee, Event } from "../../../types/event";
+import { Link } from "react-router-dom";
 
 export default function EventListItem({ event }: { event: Event }) {
   return (
@@ -40,7 +41,14 @@ export default function EventListItem({ event }: { event: Event }) {
       </Segment>
       <Segment clearing>
         <span>{event.description}</span>
-        <Button color="teal" floated="right" content="View " />
+        <Button color="red" floated="right" content="Delete "></Button>
+        <Button
+          color="teal"
+          floated="right"
+          content="View"
+          as={Link}
+          to={`/events/${event.id}`}
+        />
       </Segment>
     </SegmentGroup>
   );

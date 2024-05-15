@@ -1,16 +1,22 @@
 import { Container } from "semantic-ui-react";
-import EventDashboard from "../features/events/dashboard/EventDashboard";
 import Navbar from "./nav/Navbar";
-import { useState } from "react";
+import { Outlet, useLocation } from "react-router-dom";
+import HomePage from "../features/home/HomePage";
 
 function App() {
-  const [forOpen, setFormOpen] = useState(false);
+  const loaction = useLocation();
   return (
     <>
-      <Navbar setFormOpen={setFormOpen} />
-      <Container className="main">
-        <EventDashboard forOpen={forOpen} setFormOpen={setFormOpen} />
-      </Container>
+      {loaction.pathname == "/" ? (
+        <HomePage />
+      ) : (
+        <>
+          <Navbar />
+          <Container className="main">
+            <Outlet />
+          </Container>
+        </>
+      )}
     </>
   );
 }
