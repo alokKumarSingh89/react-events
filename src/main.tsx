@@ -8,3 +8,10 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <App />
   </React.StrictMode>
 );
+
+/**
+ *
+ * Create github alisas
+ *
+ * git config --global alias.adog "log --all --decorate --oneline --graph"
+ */
