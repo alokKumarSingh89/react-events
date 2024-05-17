@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button, Form, Header, Segment } from "semantic-ui-react";
-import { useAppDispatch, useAppSelector } from "../../../store/store";
-import { createEvent, updateEvent } from "../eventSlice";
+import { useAppSelector } from "../../../store/store";
 import { Controller, FieldValues, useForm } from "react-hook-form";
 
 import { CategoryOptions } from "./categoryOptions";
 import "react-datepicker/dist/react-datepicker.css";
 import ReactDatePicker from "react-datepicker";
-import { Event } from "../../../types/event";
 import { db } from "../../../config/firebase";
 import {
   Timestamp,
@@ -17,6 +14,7 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
+import { toast } from "react-toastify";
 export default function EventForm() {
   const {
     register,
@@ -31,16 +29,7 @@ export default function EventForm() {
   const event = useAppSelector((state) =>
     state.events.events.find((e) => e.id === id)
   );
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const initialValue = event ?? {
-    title: "",
-    category: "",
-    description: "",
-    city: "",
-    venue: "",
-    date: "",
-  };
   const updateEvent = async (data: FieldValues) => {
     if (!event) return;
     const docRef = doc(db, "events", event.id);
@@ -69,7 +58,9 @@ export default function EventForm() {
         const ref = await createEvent(value);
         navigate(`/events/${ref?.id}`);
       }
-    } catch (error) {}
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   };
 
   return (

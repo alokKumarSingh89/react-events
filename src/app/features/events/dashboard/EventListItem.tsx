@@ -11,11 +11,18 @@ import {
 import EventListAttendee from "./EventListAttendee";
 import { Attendee, Event } from "../../../types/event";
 import { Link } from "react-router-dom";
-import { useAppDispatch } from "../../../store/store";
-import { deleteEvent } from "../eventSlice";
+import { deleteDoc, doc } from "firebase/firestore";
+import { db } from "../../../config/firebase";
+import { toast } from "react-toastify";
 
 export default function EventListItem({ event }: { event: Event }) {
-  const dispatch = useAppDispatch();
+  const removeEvent = async () => {
+    try {
+      await deleteDoc(doc(db, "events", event.id));
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
   return (
     <SegmentGroup>
       <Segment>
@@ -52,7 +59,7 @@ export default function EventListItem({ event }: { event: Event }) {
           color="red"
           floated="right"
           content="Delete "
-          onClick={() => dispatch(deleteEvent(event.id))}
+          onClick={removeEvent}
         />
         <Button
           color="teal"

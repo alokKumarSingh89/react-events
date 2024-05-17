@@ -5,10 +5,10 @@ import { useEffect } from "react";
 import { collection, onSnapshot, query } from "firebase/firestore";
 import { db } from "../../../config/firebase";
 import { Event } from "../../../types/event";
-import { setEvents } from "../eventSlice";
+import { actions } from "../eventSlice";
 
 export default function EventDashboard() {
-  const events = useAppSelector((state) => state.events.events);
+  const { data: events } = useAppSelector((state) => state.events);
   const dispatch = useAppDispatch();
   useEffect(() => {
     const q = query(collection(db, "events"));
@@ -18,7 +18,7 @@ export default function EventDashboard() {
         querySnapshot.forEach((doc) => {
           evts.push({ id: doc.id, ...doc.data() } as Event);
         });
-        dispatch(setEvents(evts));
+        dispatch(actions.success(evts));
       },
       error: (err) => {
         console.log(err);
@@ -27,6 +27,7 @@ export default function EventDashboard() {
         console.log("complete");
       },
     });
+    () => unsbscribe();
   }, [dispatch]);
   return (
     <Grid>
