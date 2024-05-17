@@ -8,6 +8,15 @@ import { Controller, FieldValues, useForm } from "react-hook-form";
 import { CategoryOptions } from "./categoryOptions";
 import "react-datepicker/dist/react-datepicker.css";
 import ReactDatePicker from "react-datepicker";
+import { Event } from "../../../types/event";
+import { db } from "../../../config/firebase";
+import {
+  Timestamp,
+  collection,
+  doc,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 export default function EventForm() {
   const {
     register,
@@ -32,22 +41,35 @@ export default function EventForm() {
     venue: "",
     date: "",
   };
-
-  const onSubmit = (value: FieldValues) => {
-    console.log(value);
-    // id = id ?? Date.now().toString();
-    // event
-    //   ? dispatch(updateEvent({ ...event, ...values }))
-    //   : dispatch(
-    //       createEvent({
-    //         ...values,
-    //         id,
-    //         hostedBy: "alok",
-    //         attendees: [],
-    //         hostPhotoURL: "",
-    //       })
-    //     );
-    // navigate(`/events/${id}`);
+  const updateEvent = async (data: FieldValues) => {
+    if (!event) return;
+    const docRef = doc(db, "events", event.id);
+    await updateDoc(docRef, {
+      ...data,
+      date: Timestamp.fromDate(data.date as unknown as Date),
+    });
+  };
+  const createEvent = async (data: FieldValues) => {
+    const newEventRef = doc(collection(db, "events"));
+    await setDoc(newEventRef, {
+      ...data,
+      hostedBy: "Alok",
+      attendees: [],
+      hostPhotoURL: "",
+      date: Timestamp.fromDate(data.date as unknown as Date),
+    });
+    return newEventRef;
+  };
+  const onSubmit = async (value: FieldValues) => {
+    try {
+      if (event) {
+        await updateEvent({ ...event, ...value });
+        navigate(`/events/${event.id}`);
+      } else {
+        const ref = await createEvent(value);
+        navigate(`/events/${ref?.id}`);
+      }
+    } catch (error) {}
   };
 
   return (

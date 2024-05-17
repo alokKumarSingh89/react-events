@@ -9,7 +9,7 @@ export default function EventListAttendee({
 }) {
   return (
     <List.Item>
-      <Image size="mini" circular src={attendee.photoURL} />
+      <Image size="mini" circular src={attendee.photoURL || "/user.png"} />
     </List.Item>
   );
 }

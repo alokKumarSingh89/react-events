@@ -28,7 +28,10 @@ export default function LoginForm() {
             required: "Email is Required",
             pattern: /^[\w-\.]+@/,
           })}
-          error={errors.email?.message}
+          error={
+            errors.email?.message ||
+            (errors.email?.type == "pattern" && "Not Valid Email")
+          }
         />
         <Form.Input
           type="password"

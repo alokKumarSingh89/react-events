@@ -12,6 +12,7 @@ export default function EventDetail() {
   const event = useAppSelector((store) =>
     store.events.events.find((evt) => evt.id === id)
   );
+  if (!event) return <h2>Event not found</h2>;
   return (
     <Grid>
       <Grid.Column width={10}>
