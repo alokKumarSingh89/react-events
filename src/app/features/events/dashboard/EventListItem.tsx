@@ -4,6 +4,7 @@ import {
   Icon,
   Item,
   ItemGroup,
+  Label,
   List,
   Segment,
   SegmentGroup,
@@ -11,18 +12,8 @@ import {
 import EventListAttendee from "./EventListAttendee";
 import { Attendee, Event } from "../../../types/event";
 import { Link } from "react-router-dom";
-import { deleteDoc, doc } from "firebase/firestore";
-import { db } from "../../../config/firebase";
-import { toast } from "react-toastify";
 
 export default function EventListItem({ event }: { event: Event }) {
-  const removeEvent = async () => {
-    try {
-      await deleteDoc(doc(db, "events", event.id));
-    } catch (error: any) {
-      toast.error(error.message);
-    }
-  };
   return (
     <SegmentGroup>
       <Segment>
@@ -36,6 +27,14 @@ export default function EventListItem({ event }: { event: Event }) {
             <Item.Content>
               <Item.Header>{event.title}</Item.Header>
               <Item.Description>Hosted by {event.hostedBy}</Item.Description>
+              {event.isCancelled && (
+                <Label
+                  style={{ top: "-40px" }}
+                  ribbon="right"
+                  color="red"
+                  content="This Event Canceled"
+                />
+              )}
             </Item.Content>
           </Item>
         </ItemGroup>
@@ -55,12 +54,7 @@ export default function EventListItem({ event }: { event: Event }) {
       </Segment>
       <Segment clearing>
         <span>{event.description}</span>
-        <Button
-          color="red"
-          floated="right"
-          content="Delete "
-          onClick={removeEvent}
-        />
+
         <Button
           color="teal"
           floated="right"

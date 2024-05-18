@@ -6,19 +6,13 @@ import { Controller, FieldValues, useForm } from "react-hook-form";
 import { CategoryOptions } from "./categoryOptions";
 import "react-datepicker/dist/react-datepicker.css";
 import ReactDatePicker from "react-datepicker";
-import { db } from "../../../config/firebase";
-import {
-  Timestamp,
-  collection,
-  doc,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { useFirestore } from "../../../hooks/firestore/useFirestore";
 import { useEffect } from "react";
 import { actions } from "../eventSlice";
 import LoadingComponent from "../../../layouts/LoadingComponent";
+import { Event } from "../../../types/event";
 export default function EventForm() {
   let { id } = useParams();
   const event = useAppSelector((state) =>
@@ -36,7 +30,7 @@ export default function EventForm() {
   });
 
   const { status } = useAppSelector((state) => state.events);
-  const { loadDocument } = useFirestore("events");
+  const { loadDocument, update, create } = useFirestore("events");
   useEffect(() => {
     if (!id) return;
     loadDocument(id, actions);
@@ -44,22 +38,21 @@ export default function EventForm() {
   const navigate = useNavigate();
   const updateEvent = async (data: FieldValues) => {
     if (!event) return;
-    const docRef = doc(db, "events", event.id);
-    await updateDoc(docRef, {
+    console.log(new Date(data.date));
+    await update(event.id, {
       ...data,
-      date: Timestamp.fromDate(data.date as unknown as Date),
+      date: Timestamp.fromDate(new Date(data.date) as unknown as Date),
     });
   };
   const createEvent = async (data: FieldValues) => {
-    const newEventRef = doc(collection(db, "events"));
-    await setDoc(newEventRef, {
+    const ref = await create({
       ...data,
       hostedBy: "Alok",
       attendees: [],
       hostPhotoURL: "",
       date: Timestamp.fromDate(data.date as unknown as Date),
     });
-    return newEventRef;
+    return ref;
   };
   const onSubmit = async (value: FieldValues) => {
     try {
@@ -74,7 +67,12 @@ export default function EventForm() {
       toast.error(error.message);
     }
   };
-
+  const handleToggleCancel = async (event: Event) => {
+    await update(event.id, {
+      isCancelled: !event.isCancelled,
+    });
+    toast.success(!event.isCancelled ? "Event cancelled" : "Event Activate");
+  };
   if (status == "loading") return <LoadingComponent />;
   return (
     <Segment clearing>
@@ -149,7 +147,15 @@ export default function EventForm() {
             )}
           />
         </Form.Field>
-
+        {event && (
+          <Button
+            content={event.isCancelled ? "Reactivet Event" : "Cancle Event"}
+            floated="left"
+            color={event.isCancelled ? "green" : "red"}
+            onClick={() => handleToggleCancel(event)}
+            type="button"
+          />
+        )}
         <Button
           disabled={!isValid}
           type="submit"
