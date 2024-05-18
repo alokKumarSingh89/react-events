@@ -1,11 +1,12 @@
 import React from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import ModalWrapper from "../../common/modals/ModalWrapper";
-import { Button, Form } from "semantic-ui-react";
+import { Button, Divider, Form } from "semantic-ui-react";
 import { useAppDispatch } from "../../store/store";
 import { closeModal } from "../../common/modals/modalSlice";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../config/firebase";
+import SocailLogin from "./SocailLogin";
 
 export default function LoginForm() {
   const {
@@ -25,7 +26,7 @@ export default function LoginForm() {
     }
   }
   return (
-    <ModalWrapper header="Sign into Event">
+    <ModalWrapper header="Sign into Event" size="mini">
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Form.Input
           defaultValue=""
@@ -55,6 +56,8 @@ export default function LoginForm() {
           color="teal"
           content="Login"
         />
+        <Divider horizontal>or</Divider>
+        <SocailLogin />
       </Form>
     </ModalWrapper>
   );

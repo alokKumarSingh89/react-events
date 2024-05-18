@@ -6,6 +6,8 @@ import { useAppDispatch } from "../../store/store";
 import { closeModal } from "../../common/modals/modalSlice";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../../config/firebase";
+import { useFirestore } from "../../hooks/firestore/useFirestore";
+import { Timestamp } from "firebase/firestore";
 
 export default function RegisterForm() {
   const {
@@ -16,6 +18,7 @@ export default function RegisterForm() {
     mode: "onTouched",
   });
   const dispatch = useAppDispatch();
+  const { set } = useFirestore("profiles");
   async function onSubmit(data: FieldValues) {
     try {
       const userCred = await createUserWithEmailAndPassword(
@@ -25,6 +28,11 @@ export default function RegisterForm() {
       );
       await updateProfile(userCred.user, {
         displayName: data.displayName,
+      });
+      await set(userCred.user.uid, {
+        displayName: data.displayName,
+        email: data.email,
+        createAt: Timestamp.now(),
       });
       dispatch(closeModal());
     } catch (error) {

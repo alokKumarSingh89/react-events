@@ -15,14 +15,7 @@ export default function Navbar() {
           Event
         </MenuItem>
         <MenuItem name="Events" as={NavLink} to="/events" />
-        <MenuItem as={NavLink} to="/createEvent">
-          <Button
-            floated="right"
-            positive
-            inverted
-            content="Create Event"
-          ></Button>
-        </MenuItem>
+
         {authenticated ? <SignInMenu /> : <SignoutButtons />}
       </Container>
     </Menu>
