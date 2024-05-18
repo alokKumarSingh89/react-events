@@ -8,20 +8,23 @@ import {
   Segment,
   Statistic,
 } from "semantic-ui-react";
-
-export default function ProfileHeader() {
+import { Profile } from "../../types/profile";
+interface IProps{
+  profile:Profile;
+}
+export default function ProfileHeader({profile}:IProps) {
   return (
     <Segment>
       <Grid>
         <Grid.Column width={12}>
           <Item.Group>
             <Item>
-              <Item.Image avatar size="small" src={"/user.png"} />
+              <Item.Image avatar size="small" src={profile.photoURL||"/user.png"} />
               <Item.Content verticalAlign="middle">
                 <Header
                   as="h1"
                   style={{ dispaly: "block", marginBottom: 10 }}
-                  content="Display Name"
+                  content={profile.displayName}
                 />
               </Item.Content>
             </Item>
