@@ -18,6 +18,7 @@ export default function SignoutButtons() {
         inverted
         content="Register"
         style={{ marginLeft: "0.5em" }}
+        onClick={() => dispatch(openModal({ type: "RegisterForm" }))}
       ></Button>
     </MenuItem>
   );

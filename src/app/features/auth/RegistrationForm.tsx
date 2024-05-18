@@ -4,10 +4,10 @@ import ModalWrapper from "../../common/modals/ModalWrapper";
 import { Button, Form } from "semantic-ui-react";
 import { useAppDispatch } from "../../store/store";
 import { closeModal } from "../../common/modals/modalSlice";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../../config/firebase";
 
-export default function LoginForm() {
+export default function RegisterForm() {
   const {
     register,
     handleSubmit,
@@ -18,15 +18,28 @@ export default function LoginForm() {
   const dispatch = useAppDispatch();
   async function onSubmit(data: FieldValues) {
     try {
-      await signInWithEmailAndPassword(auth, data.email, data.password);
+      const userCred = await createUserWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+      await updateProfile(userCred.user, {
+        displayName: data.displayName,
+      });
       dispatch(closeModal());
     } catch (error) {
       console.error(error);
     }
   }
   return (
-    <ModalWrapper header="Sign into Event">
+    <ModalWrapper header="Register into Event">
       <Form onSubmit={handleSubmit(onSubmit)}>
+        <Form.Input
+          defaultValue=""
+          placeholder="Display name"
+          {...register("displayName", { required: "DisplayName is Required" })}
+          error={errors.displayName?.message}
+        />
         <Form.Input
           defaultValue=""
           placeholder="Email Address"
@@ -53,7 +66,7 @@ export default function LoginForm() {
           fluid
           size="large"
           color="teal"
-          content="Login"
+          content="Register"
         />
       </Form>
     </ModalWrapper>

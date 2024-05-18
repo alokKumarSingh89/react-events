@@ -2,19 +2,11 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { Button, Container, Menu, MenuItem } from "semantic-ui-react";
 import SignoutButtons from "./SignoutButtons";
-import { sampleData } from "../../api/SampleData";
-import { doc, setDoc } from "firebase/firestore";
-import { db } from "../../config/firebase";
+import { useAppSelector } from "../../store/store";
+import SignInMenu from "./SignInMenu";
 
 export default function Navbar() {
-  function seedData() {
-    sampleData.forEach(async (event) => {
-      const { id, ...rest } = event;
-      await setDoc(doc(db, "events", id), {
-        ...rest,
-      });
-    });
-  }
+  const { authenticated } = useAppSelector((state) => state.auth);
   return (
     <Menu inverted fixed="top">
       <Container>
@@ -31,10 +23,7 @@ export default function Navbar() {
             content="Create Event"
           ></Button>
         </MenuItem>
-        <Button floated="right" inverted onClick={seedData}>
-          Seed
-        </Button>
-        <SignoutButtons />
+        {authenticated ? <SignInMenu /> : <SignoutButtons />}
       </Container>
     </Menu>
   );
