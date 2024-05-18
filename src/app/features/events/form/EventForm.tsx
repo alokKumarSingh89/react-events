@@ -15,7 +15,15 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { toast } from "react-toastify";
+import { useFirestore } from "../../../hooks/firestore/useFirestore";
+import { useEffect } from "react";
+import { actions } from "../eventSlice";
+import LoadingComponent from "../../../layouts/LoadingComponent";
 export default function EventForm() {
+  let { id } = useParams();
+  const event = useAppSelector((state) =>
+    state.events.data.find((e) => e.id === id)
+  );
   const {
     register,
     handleSubmit,
@@ -24,11 +32,15 @@ export default function EventForm() {
     formState: { errors, isValid },
   } = useForm({
     mode: "onBlur",
+    defaultValues: async () => event,
   });
-  let { id } = useParams();
-  const event = useAppSelector((state) =>
-    state.events.events.find((e) => e.id === id)
-  );
+
+  const { status } = useAppSelector((state) => state.events);
+  const { loadDocument } = useFirestore("events");
+  useEffect(() => {
+    if (!id) return;
+    loadDocument(id, actions);
+  }, [id, loadDocument]);
   const navigate = useNavigate();
   const updateEvent = async (data: FieldValues) => {
     if (!event) return;
@@ -63,6 +75,7 @@ export default function EventForm() {
     }
   };
 
+  if (status == "loading") return <LoadingComponent />;
   return (
     <Segment clearing>
       <Header content="Event Detail" sub color="teal" />
