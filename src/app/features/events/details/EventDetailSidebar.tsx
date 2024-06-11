@@ -20,7 +20,7 @@ export default function EventDetailSidebar() {
             <Item.Image size="tiny" src="/user.png" />
             <Item.Content verticalAlign="middle">
               <Item.Header as="h3">
-                <span>Tom</span>
+                <span>Alok</span>
               </Item.Header>
             </Item.Content>
           </Item>
@@ -28,7 +28,7 @@ export default function EventDetailSidebar() {
             <Item.Image size="tiny" src="/user.png" />
             <Item.Content verticalAlign="middle">
               <Item.Header as="h3">
-                <span>Bob</span>
+                <span>Singh</span>
               </Item.Header>
             </Item.Content>
           </Item>
